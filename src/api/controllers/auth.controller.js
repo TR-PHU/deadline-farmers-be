@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const authService = require('../services/auth.service')
 
 module.exports = {
@@ -17,16 +16,8 @@ module.exports = {
         } catch (error) {
             next(error);
         }
-    }
-}
-
-=======
-const authService = require('../services/auth.service');
-
-module.exports = {
-    register: () => {},
-    signIn: () => {},
+    },
     forgetPassword: () => {},
     resetPassword: () => {},
-};
->>>>>>> c17d5d95871156150ade6f04a9690878ee256365
+}
+

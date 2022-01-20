@@ -4,17 +4,16 @@ const bcrypt = require('bcrypt');
 const sendMail = require('../../commons/emails/sendMail');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
+const resetToken = require('../models/resetToken');
 
 const Register = async (body) => {
     try {
         const { username, password, email, address, phone, fullname } = body;
-        const user_Name = await User.find({ username: username });
-        const user_email = await User.find({ email: email });
-        if (user_Name.length > 0) {
-            throw new createError(400, 'Username already exist!');
-        }
-        if (user_email.length > 0) {
-            throw new createError(400, 'Your email already exist!');
+        // const user_Name = await User.find({ username: username });
+        // const user_email = await User.find({ email: email });
+        const user = await User.findOne({ $or: [{ email }, { username }] });
+        if (user) {
+            throw new createError(400, 'User already exist!');
         }
         try {
             const salt = await bcrypt.genSalt(10);
@@ -28,9 +27,28 @@ const Register = async (body) => {
                 phone,
                 fullname,
             });
-
-            console.log('Response Database:', responseDB);
-            return responseDB;
+            const accessToken = jwt.sign(
+                { userId: responseDB._id, username },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: '3h',
+                }
+            );
+            const refreshToken = jwt.sign(
+                { userId: responseDB._id, username },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: '5h',
+                }
+            );
+            return {
+                statusCode: 201,
+                message: 'Create user success',
+                token: {
+                    accessToken,
+                    refreshToken,
+                },
+            };
         } catch (error) {
             throw error;
         }
@@ -58,20 +76,27 @@ module.exports = {
         try {
             let filterUser = await User.find({ username: username });
             if (filterUser.length === 1) {
-                const accessToken = jwt.sign(
-                    {
-                        username: filterUser[0].username,
-                    },
-                    'secret'
-                );
-                const refreshToken = jwt.sign(
-                    {
-                        username: filterUser[0].username,
-                        accessToken: accessToken,
-                    },
-                    'secret'
-                );
                 if (await bcrypt.compare(plainPassword, filterUser[0].password)) {
+                    const accessToken = jwt.sign(
+                        {
+                            userId: filterUser[0]._id,
+                            username: filterUser[0].username,
+                        },
+                        process.env.JWT_SECRET,
+                        {
+                            expiresIn: '3h',
+                        }
+                    );
+                    const refreshToken = jwt.sign(
+                        {
+                            userId: filterUser[0]._id,
+                            username: filterUser[0].username,
+                        },
+                        process.env.JWT_SECRET,
+                        {
+                            expiresIn: '5h',
+                        }
+                    );
                     return {
                         error: false,
                         msg: 'Login success',
@@ -102,11 +127,12 @@ module.exports = {
             throw new createError(error);
         }
     },
-    resetPassword: async (userId, token) => {
+    resetPassword: async (userId, token, newPassword) => {
         try {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(newPassword, salt);
-            const isValidToken = await ResetToken.findOne({
+            console.log(userId);
+            const isValidToken = await resetToken.findOne({
                 userId,
                 resetToken: token,
             });

@@ -8,9 +8,12 @@ const createError = require('http-errors');
 app.use(express.json());
 connectDatabase();
 
+// app.use("/api/v1")
+
 app.use((req, res, next) => {
     next(new createError(404, 'NOT FOUND'));
 });
+
 
 app.use((error, req, res, next) => {
     let { statusCode, message } = error;

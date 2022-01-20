@@ -30,6 +30,11 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        fullname: {
+            type: String,
+            minlength: 5,
+            require: true
+        },
     },
     { timestamps: true },
     { collection: 'users' }

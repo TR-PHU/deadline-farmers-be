@@ -54,15 +54,15 @@ module.exports = {
             throw new createError(500, 'Cannot create User');
         }
     },
-    signIn: async ({ username, password: plainPassword }) => {
+    signIn: async ({ email, password: plainPassword }) => {
         try {
-            let filterUser = await User.find({ username: username });
+            let filterUser = await User.find({ email: email });
             if (filterUser.length === 1) {
                 if (await bcrypt.compare(plainPassword, filterUser[0].password)) {
                     const accessToken = jwt.sign(
                         {
                             userId: filterUser[0]._id,
-                            username: filterUser[0].username,
+                            email: filterUser[0].email,
                             role: filterUser[0].role,
                         },
                         process.env.JWT_SECRET,
@@ -73,7 +73,7 @@ module.exports = {
                     const refreshToken = jwt.sign(
                         {
                             userId: filterUser[0]._id,
-                            username: filterUser[0].username,
+                            email: filterUser[0].email,
                             role: filterUser[0].role,
                         },
                         process.env.JWT_SECRET,

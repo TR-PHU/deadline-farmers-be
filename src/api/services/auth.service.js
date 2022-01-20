@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const sendMail = require('../../commons/emails/sendMail');
 const { v4: uuidv4 } = require('uuid');
 const resetToken = require('../models/resetToken');
@@ -26,14 +26,14 @@ module.exports = {
                 fullname,
             });
             const accessToken = jwt.sign(
-                { userId: responseDB._id, username, role: false},
+                { userId: responseDB._id, username, role: responseDB.role },
                 process.env.JWT_SECRET,
                 {
                     expiresIn: '3h',
                 }
             );
             const refreshToken = jwt.sign(
-                { userId: responseDB._id, username, role: false },
+                { userId: responseDB._id, username, role: responseDB.role },
                 process.env.JWT_SECRET,
                 {
                     expiresIn: '5h',
@@ -54,14 +54,6 @@ module.exports = {
             throw new createError(500, 'Cannot create User');
         }
     },
-    GetAllUsers: async () => {
-        try {
-            const res = await User.find();
-            return res;
-        } catch (error) {
-            throw new createError(500, 'Cannot get all users!');
-        }
-    },
     signIn: async ({ username, password: plainPassword }) => {
         try {
             let filterUser = await User.find({ username: username });
@@ -71,7 +63,7 @@ module.exports = {
                         {
                             userId: filterUser[0]._id,
                             username: filterUser[0].username,
-                            role: filterUser[0].role
+                            role: filterUser[0].role,
                         },
                         process.env.JWT_SECRET,
                         {
@@ -82,7 +74,7 @@ module.exports = {
                         {
                             userId: filterUser[0]._id,
                             username: filterUser[0].username,
-                            role: filterUser[0].role
+                            role: filterUser[0].role,
                         },
                         process.env.JWT_SECRET,
                         {
@@ -143,5 +135,5 @@ module.exports = {
         } catch (error) {
             throw new createError(error);
         }
-    }
+    },
 };

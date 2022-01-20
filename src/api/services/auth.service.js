@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 const sendMail = require('../../commons/emails/sendMail');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
 const Register = async (body) => {
     try {
@@ -21,7 +22,7 @@ const Register = async (body) => {
 
             const responseDB = await User.create({
                 username,
-                hashPassword,
+                password: hashPassword,
                 email,
                 address,
                 phone,
@@ -53,6 +54,42 @@ const GetAllUsers = async () => {
 module.exports = {
     Register,
     GetAllUsers,
+    signIn: async ({ username, password: plainPassword }) => {
+        try {
+            let filterUser = await User.find({ username: username });
+            if (filterUser.length === 1) {
+                const accessToken = jwt.sign(
+                    {
+                        username: filterUser[0].username,
+                    },
+                    'secret'
+                );
+                const refreshToken = jwt.sign(
+                    {
+                        username: filterUser[0].username,
+                        accessToken: accessToken,
+                    },
+                    'secret'
+                );
+                if (await bcrypt.compare(plainPassword, filterUser[0].password)) {
+                    return {
+                        error: false,
+                        msg: 'Login success',
+                        token: {
+                            accessToken,
+                            refreshToken,
+                        },
+                    };
+                } else {
+                    return createError(401, 'Wrong Password');
+                }
+            } else {
+                return new createError(404, 'User not found');
+            }
+        } catch (error) {
+            throw new createError(500, 'Can not login');
+        }
+    },
     forgetPassword: async (email) => {
         try {
             let info = await sendMail(email, uuidv4());
@@ -69,7 +106,10 @@ module.exports = {
         try {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(newPassword, salt);
-            const isValidToken = await ResetToken.findOne({ userId, resetToken: token });
+            const isValidToken = await ResetToken.findOne({
+                userId,
+                resetToken: token,
+            });
             if (!isValidToken) {
                 throw new createError(400, 'Token is not valid');
             }

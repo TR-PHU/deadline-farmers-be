@@ -4,11 +4,11 @@ const app = express();
 const PORT = 5000 || process.env.PORT;
 const connectDatabase = require('./src/api/configs/db.config');
 const createError = require('http-errors');
-
+const api = require('./src/api/routes')
 app.use(express.json());
 connectDatabase();
 
-// app.use("/api/v1")
+app.use("/api/v1", api);
 
 app.use((req, res, next) => {
     next(new createError(404, 'NOT FOUND'));

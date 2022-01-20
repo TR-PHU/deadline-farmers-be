@@ -6,16 +6,14 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const resetToken = require('../models/resetToken');
 
-const Register = async (body) => {
-    try {
+module.exports = {
+    Register: async (body) => {
         const { username, password, email, address, phone, fullname } = body;
-        // const user_Name = await User.find({ username: username });
-        // const user_email = await User.find({ email: email });
-        const user = await User.findOne({ $or: [{ email }, { username }] });
-        if (user) {
-            throw new createError(400, 'User already exist!');
-        }
         try {
+            const user = await User.findOne({ $or: [{ email }, { username }] });
+            if (user) {
+                throw new createError(400, 'User already exist!');
+            }
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
 
@@ -50,28 +48,20 @@ const Register = async (body) => {
                 },
             };
         } catch (error) {
-            throw error;
+            if (error) {
+                throw error;
+            }
+            throw new createError(500, 'Cannot create User');
         }
-    } catch (error) {
-        if (error) {
-            throw error;
+    },
+    GetAllUsers: async () => {
+        try {
+            const res = await User.find();
+            return res;
+        } catch (error) {
+            throw new createError(500, 'Cannot get all users!');
         }
-        throw new createError(500, 'Cannot create User');
-    }
-};
-
-const GetAllUsers = async () => {
-    try {
-        const res = await User.find();
-        return res;
-    } catch (error) {
-        throw new createError(500, 'Cannot get all users!');
-    }
-};
-
-module.exports = {
-    Register,
-    GetAllUsers,
+    },
     signIn: async ({ username, password: plainPassword }) => {
         try {
             let filterUser = await User.find({ username: username });

@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
         fullname: {
             type: String,
             minlength: 5,
-            require: true
+            require: true,
         },
     },
     { timestamps: true },

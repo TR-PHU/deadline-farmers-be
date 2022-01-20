@@ -29,6 +29,7 @@ module.exports = {
                     phone,
                     fullname,
                 });
+                
                 console.log('Response Database:', responseDB);
                 return responseDB;
             } catch (error) {
@@ -65,7 +66,10 @@ module.exports = {
         try {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(newPassword, salt);
-            const isValidToken = await ResetToken.findOne({ userId, resetToken: token });
+            const isValidToken = await ResetToken.findOne({
+                userId,
+                resetToken: token,
+            });
             if (!isValidToken) {
                 throw new createError(400, 'Token is not valid');
             }

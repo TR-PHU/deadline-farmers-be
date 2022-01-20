@@ -15,6 +15,14 @@ module.exports = {
             next(error);
         }
     },
+    signIn: async (req, res, next) => {
+        try {
+            let DTO = await authService.signIn(req.body);
+            res.status(200).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
     GetAllUsers: async (req, res, next) => {
         try {
             const DTO = await authService.GetAllUsers();
@@ -23,6 +31,7 @@ module.exports = {
             next(error);
         }
     },
+
     forgetPassword: async (req, res, next) => {
         try {
             const { email } = req.body;

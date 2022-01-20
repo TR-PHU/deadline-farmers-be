@@ -1,10 +1,16 @@
 const authService = require('../services/auth.service')
+const jwt = require('jsonwebtoken');
 
 module.exports = {
     Register: async(req, res, next) => {
         try {
             const DTO = await authService.Register(req.body)
-            res.status(200).json(DTO);
+            const token =  jwt.sign({...DTO}, process.env.JWT_SECRET);
+            
+            res.status(200).json({
+                message: 'Success!',
+                token: token
+            });
         } catch (error) {
             next(error);
         }

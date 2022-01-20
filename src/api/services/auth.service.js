@@ -1,14 +1,17 @@
 const User = require('../models/user');
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
-const authController = require('../controllers/auth.controller');
 
 const Register = async (body) => {
     try {
         const { username, password, email, address, phone, fullname } = body;
-        const user = await User.find({ username });
-        if (!user) {
-            return createError(400, 'User already exist!');
+        const user_Name = await User.find({ username: username });
+        const user_email = await User.find({ email: email });
+        if (user_Name.length > 0) {
+            throw new createError(400, 'Username already exist!');
+        }
+        if(user_email.length > 0) {
+            throw new createError(400, 'Your email already exist!')
         }
         try {
             const salt = await bcrypt.genSalt(10)
@@ -19,13 +22,19 @@ const Register = async (body) => {
                 hashPassword,
                 email,
                 address,
-                phone,
-                fullname,
+                phone, 
+                fullname
             });
+
             console.log('Response Database:', responseDB);
             return responseDB;
-        } catch (error) {}
+        } catch (error) {
+            throw error;
+        }
     } catch (error) {
+        if(error) {
+            throw error;
+        }
         throw new createError(500, 'Cannot create User');
     }
 };

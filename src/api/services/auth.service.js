@@ -1,6 +1,9 @@
 const User = require('../models/user');
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+const sendMail = require('../../commons/emails/sendMail');
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
     Register: async (body) => {
@@ -20,7 +23,7 @@ module.exports = {
 
                 const responseDB = await User.create({
                     username,
-                    hashPassword,
+                    password: hashPassword,
                     email,
                     address,
                     phone,
@@ -79,4 +82,39 @@ module.exports = {
             throw new createError(error);
         }
     },
+    signIn: async ({ username, password: plainPassword }) => {
+        try {
+            const user = await User.find({ username }).lean();
+            if (user.length > 1) {
+                console.log(user);
+                const accessToken = jwt.sign(
+                    {
+                        username: filterUser[0].username,
+                    },
+                    process.env.JWT_SECRET
+                );
+                const refreshToken = jwt.sign(
+                    {
+                        username: filterUser[0].username,
+                        accessToken: accessToken,
+                    },
+                    process.env.JWT_SECRET
+                );
+                if (await bcrypt.compare(plainPassword, filterUser[0].password)) {
+                    return {
+                        error: false,
+                        msg: 'Login success',
+                        token: {
+                            accessToken,
+                            refreshToken,
+                        },
+                    };
+                }
+            } else {
+                return new createError(404, 'User not found');
+            }
+        } catch (error) {
+            throw new createError(500, 'Can not login');
+        }
+    }
 };

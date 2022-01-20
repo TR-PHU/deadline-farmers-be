@@ -4,37 +4,49 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const sendMail = require('../../commons/emails/sendMail');
 const { v4: uuidv4 } = require('uuid');
+const resetToken = require('../models/resetToken');
 
 module.exports = {
     Register: async (body) => {
+        const { username, password, email, address, phone, fullname } = body;
         try {
-            const { username, password, email, address, phone, fullname } = body;
-            const user_Name = await User.find({ username: username });
-            const user_email = await User.find({ email: email });
-            if (user_Name.length > 0) {
-                throw new createError(400, 'Username already exist!');
+            const user = await User.findOne({ $or: [{ email }, { username }] });
+            if (user) {
+                throw new createError(400, 'User already exist!');
             }
-            if (user_email.length > 0) {
-                throw new createError(400, 'Your email already exist!');
-            }
-            try {
-                const salt = await bcrypt.genSalt(10);
-                const hashPassword = await bcrypt.hash(password, salt);
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(password, salt);
 
-                const responseDB = await User.create({
-                    username,
-                    password: hashPassword,
-                    email,
-                    address,
-                    phone,
-                    fullname,
-                });
-                
-                console.log('Response Database:', responseDB);
-                return responseDB;
-            } catch (error) {
-                throw error;
-            }
+            const responseDB = await User.create({
+                username,
+                password: hashPassword,
+                email,
+                address,
+                phone,
+                fullname,
+            });
+            const accessToken = jwt.sign(
+                { userId: responseDB._id, username, role: false},
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: '3h',
+                }
+            );
+            const refreshToken = jwt.sign(
+                { userId: responseDB._id, username, role: false },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: '5h',
+                }
+            );
+            return {
+                statusCode: 201,
+                message: 'Create user success',
+                token: {
+                    accessToken,
+                    refreshToken,
+                },
+            };
         } catch (error) {
             if (error) {
                 throw error;
@@ -46,6 +58,51 @@ module.exports = {
         try {
             const res = await User.find();
             return res;
+        } catch (error) {
+            throw new createError(500, 'Cannot get all users!');
+        }
+    },
+    signIn: async ({ username, password: plainPassword }) => {
+        try {
+            let filterUser = await User.find({ username: username });
+            if (filterUser.length === 1) {
+                if (await bcrypt.compare(plainPassword, filterUser[0].password)) {
+                    const accessToken = jwt.sign(
+                        {
+                            userId: filterUser[0]._id,
+                            username: filterUser[0].username,
+                            role: filterUser[0].role
+                        },
+                        process.env.JWT_SECRET,
+                        {
+                            expiresIn: '3h',
+                        }
+                    );
+                    const refreshToken = jwt.sign(
+                        {
+                            userId: filterUser[0]._id,
+                            username: filterUser[0].username,
+                            role: filterUser[0].role
+                        },
+                        process.env.JWT_SECRET,
+                        {
+                            expiresIn: '5h',
+                        }
+                    );
+                    return {
+                        error: false,
+                        msg: 'Login success',
+                        token: {
+                            accessToken,
+                            refreshToken,
+                        },
+                    };
+                } else {
+                    return createError(401, 'Wrong Password');
+                }
+            } else {
+                return new createError(404, 'User not found');
+            }
         } catch (error) {
             throw new createError(500, 'Cannot get all users!');
         }
@@ -62,11 +119,12 @@ module.exports = {
             throw new createError(error);
         }
     },
-    resetPassword: async (userId, token) => {
+    resetPassword: async (userId, token, newPassword) => {
         try {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(newPassword, salt);
-            const isValidToken = await ResetToken.findOne({
+            console.log(userId);
+            const isValidToken = await resetToken.findOne({
                 userId,
                 resetToken: token,
             });
@@ -84,41 +142,6 @@ module.exports = {
             };
         } catch (error) {
             throw new createError(error);
-        }
-    },
-    signIn: async ({ username, password: plainPassword }) => {
-        try {
-            const user = await User.find({ username }).lean();
-            if (user.length > 1) {
-                console.log(user);
-                const accessToken = jwt.sign(
-                    {
-                        username: filterUser[0].username,
-                    },
-                    process.env.JWT_SECRET
-                );
-                const refreshToken = jwt.sign(
-                    {
-                        username: filterUser[0].username,
-                        accessToken: accessToken,
-                    },
-                    process.env.JWT_SECRET
-                );
-                if (await bcrypt.compare(plainPassword, filterUser[0].password)) {
-                    return {
-                        error: false,
-                        msg: 'Login success',
-                        token: {
-                            accessToken,
-                            refreshToken,
-                        },
-                    };
-                }
-            } else {
-                return new createError(404, 'User not found');
-            }
-        } catch (error) {
-            throw new createError(500, 'Can not login');
         }
     }
 };

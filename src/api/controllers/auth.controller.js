@@ -5,12 +5,7 @@ module.exports = {
     Register: async (req, res, next) => {
         try {
             const DTO = await authService.Register(req.body);
-            const token = jwt.sign({ ...DTO }, process.env.JWT_SECRET);
-
-            res.status(200).json({
-                message: 'Success!',
-                token: token,
-            });
+            res.status(201).json(DTO);
         } catch (error) {
             next(error);
         }

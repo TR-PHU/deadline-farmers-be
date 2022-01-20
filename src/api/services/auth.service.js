@@ -41,7 +41,7 @@ module.exports = {
             );
             return {
                 statusCode: 201,
-                message: 'Create user success',
+                message: 'Create user success!',
                 token: {
                     accessToken,
                     refreshToken,
@@ -90,12 +90,13 @@ module.exports = {
                         },
                     };
                 } else {
-                    return createError(401, 'Wrong Password');
+                    throw new createError(401, 'Wrong Password');
                 }
             } else {
-                return new createError(404, 'User not found');
+                throw new createError(404, 'User not found');
             }
         } catch (error) {
+            if(error) throw error;
             throw new createError(500, 'Cannot get all users!');
         }
     },

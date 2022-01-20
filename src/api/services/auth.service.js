@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const createError = require('http-errors');
 const bcrypt = require('bcrypt');
+const sendMail = require('../../commons/emails/sendMail');
+const { v4: uuidv4 } = require('uuid');
 
 const Register = async (body) => {
     try {

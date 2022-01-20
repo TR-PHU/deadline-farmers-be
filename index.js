@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const PORT = 5000 || process.env.PORT;
-const connectDatabase = require('./src/configs/db.config');
+const connectDatabase = require('./src/api/configs/db.config');
 const createError = require('http-errors');
 
 app.use(express.json());

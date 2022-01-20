@@ -10,11 +10,11 @@ const Register = async (body) => {
         if (user_Name.length > 0) {
             throw new createError(400, 'Username already exist!');
         }
-        if(user_email.length > 0) {
-            throw new createError(400, 'Your email already exist!')
+        if (user_email.length > 0) {
+            throw new createError(400, 'Your email already exist!');
         }
         try {
-            const salt = await bcrypt.genSalt(10)
+            const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
 
             const responseDB = await User.create({
@@ -22,8 +22,8 @@ const Register = async (body) => {
                 hashPassword,
                 email,
                 address,
-                phone, 
-                fullname
+                phone,
+                fullname,
             });
 
             console.log('Response Database:', responseDB);
@@ -32,7 +32,7 @@ const Register = async (body) => {
             throw error;
         }
     } catch (error) {
-        if(error) {
+        if (error) {
             throw error;
         }
         throw new createError(500, 'Cannot create User');
@@ -44,8 +44,44 @@ const GetAllUsers = async () => {
         const res = await User.find();
         return res;
     } catch (error) {
-        throw new createError(500, "Cannot get all users!");
+        throw new createError(500, 'Cannot get all users!');
     }
 };
 
-module.exports = { Register, GetAllUsers };
+module.exports = {
+    Register,
+    GetAllUsers,
+    forgetPassword: async (email) => {
+        try {
+            let info = await sendMail(email, uuidv4());
+            return {
+                messageId: info.messageId,
+                statusCode: 200,
+                message: 'Send success',
+            };
+        } catch (error) {
+            throw new createError(error);
+        }
+    },
+    resetPassword: async (userId, token) => {
+        try {
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(newPassword, salt);
+            const isValidToken = await ResetToken.findOne({ userId, resetToken: token });
+            if (!isValidToken) {
+                throw new createError(400, 'Token is not valid');
+            }
+            const user = await User.findOneAndUpdate(
+                { _id: userId },
+                { password: hashPassword },
+                { new: true }
+            );
+            return {
+                statusCode: 200,
+                message: 'Reset password success',
+            };
+        } catch (error) {
+            throw new createError(error);
+        }
+    },
+};

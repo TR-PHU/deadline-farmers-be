@@ -16,9 +16,16 @@ module.exports = {
     },
     CreateProduct: async (body) => {
         try {
-            // const { name, image, price, catagories, quantity, description, rating } = body;
-            const newProduct = new Product(body);
-            const res = await newProduct.save();
+            const { name, image, price, catagories, quantity, description, rating } = body;
+            const res = await Product.create({
+                name,
+                image,
+                price,
+                quantity,
+                description,
+                rating,
+                catagories,
+            });
             console.log(res);
             return {
                 statusCode: 201,
@@ -31,7 +38,7 @@ module.exports = {
     getAllProduct: async (qPage) => {
         const PAGE_SIZE = 12;
         try {
-            if (!qPage) {
+            if (qPage) {
                 qPage = parseInt(qPage);
                 qPage < 0 ? (qPage = 1) : qPage;
                 const startIndex = (qPage - 1) * PAGE_SIZE;
@@ -42,7 +49,10 @@ module.exports = {
                 };
             } else {
                 const products = await Product.find();
-                return products;
+                return {
+                    statusCode: 200,
+                    products,
+                };
             }
         } catch (error) {
             throw new CreateError(error);

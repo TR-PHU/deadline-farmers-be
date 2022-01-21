@@ -18,6 +18,19 @@ module.exports = {
 
             const findCart = await Cart.find({ userId });
             if (findCart.length > 0) {
+<<<<<<< HEAD
+                const productsList = findCart[0].products.concat(products);
+
+                const res = await Cart.updateOne(
+                    { userId },
+                    {
+                        $set: {
+                            products: productsList,
+                        },
+                    }
+                );
+
+=======
                 const res = await Cart.updateOne(
                     { userId },
                     {
@@ -25,6 +38,7 @@ module.exports = {
                     }
                 );
                 console.log(res);
+>>>>>>> 049455f62a469fe0c0f4511c330dcbcccc9bc954
                 return {
                     statusCode: 201,
                     msg: 'ok',
@@ -44,6 +58,7 @@ module.exports = {
     getCartByUserId: async (id) => {
         try {
             const res = await Cart.find({ userId: id });
+            console.log(res);
             return res;
         } catch (error) {
             throw new createError(500, 'Interval server errors');

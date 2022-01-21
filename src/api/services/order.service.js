@@ -21,7 +21,13 @@ module.exports = {
     getOrder: async (Id) => {
         try {
             const res = await Order.find({ userId: Id });
-            console.log(res[0].products);
+            if (res.length === 0) {
+                return {
+                    statusCode: 200,
+                    message: 'Getting order successful',
+                    order: res,
+                };
+            }
             return {
                 statusCode: 200,
                 message: 'Getting order successful',

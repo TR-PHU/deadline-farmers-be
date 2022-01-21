@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const createError = require('http-errors');
 
 const verifyAdmin = (req, res, next) => {
     if (req.user.isAdmin) {
@@ -12,5 +10,5 @@ const verifyAdmin = (req, res, next) => {
 };
 
 module.exports = {
-    verifyToken,
+    verifyAdmin,
 };

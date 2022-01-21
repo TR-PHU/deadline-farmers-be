@@ -5,6 +5,7 @@ module.exports = {
     GetProductById: async (productId) => {
         try {
             const res = await Product.find({ _id: productId });
+            console.log(res);
             if (!res) {
                 throw new CreateError(404, 'Product not found!');
             }

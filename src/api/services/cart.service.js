@@ -7,15 +7,18 @@ module.exports = {
             if (findCart.length > 0) {
                 const productsList = findCart[0].products.concat(products);
 
-                const res = await Cart.updateOne({userId}, {
-                    $set: {
-                        products: productsList
+                const res = await Cart.updateOne(
+                    { userId },
+                    {
+                        $set: {
+                            products: productsList,
+                        },
                     }
-                });
+                );
 
                 return {
                     statusCode: 201,
-                    msg: 'ok'
+                    msg: 'ok',
                 };
             }
 
@@ -32,6 +35,7 @@ module.exports = {
     getCartByUserId: async (id) => {
         try {
             const res = await Cart.find({ userId: id });
+            console.log(res);
             return res;
         } catch (error) {
             if (error) throw error;

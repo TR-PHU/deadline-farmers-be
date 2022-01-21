@@ -59,4 +59,24 @@ module.exports = {
             throw new CreateError(error);
         }
     },
+    deleteProductById: async ( id ) => {
+        try {
+            const res = await Product.deleteOne({ _id: id });
+
+            console.log(res);
+            return {
+                statusCode: 202,
+                msg: "Delete Success!"
+            }
+        } catch (error) {
+            throw new CreateError(500, "Internal server errors");
+        }
+    },
+    modifyProductById: async( id, {} ) => {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 };

@@ -24,15 +24,35 @@ module.exports = {
                 quantity,
                 description,
                 rating,
-                catagories
+                catagories,
             });
             console.log(res);
             return {
                 statusCode: 201,
-                msg: 'ok'
+                msg: 'ok',
+            };
+        } catch (error) {
+            throw new CreateError(500, 'Internal server errors');
+        }
+    },
+    getAllProduct: async (qPage) => {
+        const PAGE_SIZE = 12;
+        try {
+            if (!qPage) {
+                qPage = parseInt(qPage);
+                qPage < 0 ? (qPage = 1) : qPage;
+                const startIndex = (qPage - 1) * PAGE_SIZE;
+                const products = await Product.find().skip(startIndex).limit(PAGE_SIZE);
+                return {
+                    statusCode: 200,
+                    products,
+                };
+            } else {
+                const products = await Product.find();
+                return products;
             }
         } catch (error) {
-            throw new CreateError(500, "Internal server errors")
+            throw new CreateError(error);
         }
     },
 };

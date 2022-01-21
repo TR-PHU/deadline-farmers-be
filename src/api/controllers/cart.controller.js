@@ -9,5 +9,13 @@ module.exports = {
         } catch (error) {
             next(error);
         }
-    }
-}
+    }, 
+    getCartByUserId: async (req, res, next) => {
+        try {
+            let DTO = cartService.getCartByUserId(req.user.userId);
+            res.status(200).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+};

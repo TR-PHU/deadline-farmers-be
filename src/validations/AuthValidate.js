@@ -13,7 +13,6 @@ const authValidate = (schema) => (req, res, next) => {
         next(error);
     }
 }
-
 const schema = {
     register: Joi.object({
         username: Joi.string().alphanum().min(3).max(15).required(),

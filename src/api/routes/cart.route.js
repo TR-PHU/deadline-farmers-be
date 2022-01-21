@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const cartController = require('../controllers/cart.controller')
-const verifyAdmin = require('../middlewares/verifyAdmin')
+const cartController = require('../controllers/cart.controller');
+const { verifyToken } = require('../middlewares/verifyToken');
 
-router.post('/',verifyAdmin ,cartController.CreateCart);
+router.post('/', verifyToken, cartController.CreateCart);
 
 // get cart by user id
-router.get('/:id', cartController.getCartByUserId);
+router.get('/', verifyToken, cartController.getCartByUserId);
 
 module.exports = router;

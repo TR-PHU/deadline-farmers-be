@@ -16,16 +16,9 @@ module.exports = {
     },
     CreateProduct: async (body) => {
         try {
-            const { name, image, price, catagories, quantity, description, rating } = body;
-            const res = await Product.create({
-                name,
-                image,
-                price,
-                quantity,
-                description,
-                rating,
-                catagories
-            });
+            // const { name, image, price, catagories, quantity, description, rating } = body;
+            const newProduct = new Product(body);
+            const res = await newProduct.save();
             console.log(res);
             return {
                 statusCode: 201,

@@ -23,7 +23,7 @@ module.exports = {
         try {
             let qPage = req.query.page;
             const DTO = await productService.getAllProduct(qPage);
-            res.status(DTO.statusCode).json(DTO);
+            res.status(200).json(DTO);
         } catch (error) {
             next(error);
         }

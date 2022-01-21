@@ -1,5 +1,4 @@
 const Cart = require('../models/cart');
-const CreateError = require('http-errors');
 const createError = require('http-errors');
 module.exports = {
     CreateCart: async (userId, products) => {
@@ -8,7 +7,6 @@ module.exports = {
                 userId,
                 products,
             });
-            console.log(res);
             return res;
         } catch (error) {
             if (error) throw error;
@@ -18,7 +16,7 @@ module.exports = {
     getCartByUserId: async (id) => {
         try {
             const res = await Cart.find({ userId: id });
-            return res[0].products;
+            return res;
         } catch (error) {
             if (error) throw error;
 

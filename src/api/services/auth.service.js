@@ -96,7 +96,7 @@ module.exports = {
                 throw new createError(404, 'User not found');
             }
         } catch (error) {
-            if(error) throw error;
+            if (error) throw error;
             throw new createError(500, 'Cannot get all users!');
         }
     },
@@ -116,7 +116,6 @@ module.exports = {
         try {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(newPassword, salt);
-            console.log(userId);
             const isValidToken = await resetToken.findOne({
                 userId,
                 resetToken: token,

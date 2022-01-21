@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
     if (!token) {
         return res.status(401).json({
             statusCode: 401,
-            message: 'You are not authenticated!',
+            message: 'UNAUTHORIZED',
         });
     }
     const decodeToken = jwt.verify(token, process.env.JWT_SECRET);

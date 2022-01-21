@@ -18,4 +18,17 @@ module.exports = {
             throw new createError(error);
         }
     },
+    getOrder: async (Id) => {
+        try {
+            const res = await Order.find({ userId: Id });
+            console.log(res[0].products);
+            return {
+                statusCode: 200,
+                message: 'Getting order successful',
+                order: res[0].products,
+            };
+        } catch (error) {
+            throw new createError(error);
+        }
+    },
 };

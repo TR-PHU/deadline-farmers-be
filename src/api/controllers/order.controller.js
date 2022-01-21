@@ -10,4 +10,13 @@ module.exports = {
             next(error);
         }
     },
+    getOrder: async (req, res, next) => {
+        const userId = req.user.userId;
+        try {
+            const DTO = await orderService.getOrder(userId);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

@@ -1,9 +1,9 @@
 const cartService = require('../services/cart.service');
 
 module.exports = {
-    CreateCart: async (req, res, next) => {
+    updateCart: async (req, res, next) => {
         try {
-            const DTO = await cartService.CreateCart(req.user.userId, req.body.products);
+            const DTO = await cartService.updateCart(req.user.userId, req.body.products);
             
             res.status(201).json(DTO);
         } catch (error) {

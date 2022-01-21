@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 
 const verifyAdmin = (req, res, next) => {
-    if (req.user.isAdmin) {
+    if (req.user.role) {
         return next();
     }
     return res.status(403).json({
@@ -12,5 +12,5 @@ const verifyAdmin = (req, res, next) => {
 };
 
 module.exports = {
-    verifyToken,
+    verifyAdmin,
 };

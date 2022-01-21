@@ -1,7 +1,7 @@
-const cartService = require('../services/cart.service')
+const cartService = require('../services/cart.service');
 
 module.exports = {
-    CreateCart: async(req, res, next) => {
+    CreateCart: async (req, res, next) => {
         try {
             const DTO = await cartService.CreateCart(req.user.userId, req.body.products);
             
@@ -9,11 +9,10 @@ module.exports = {
         } catch (error) {
             next(error);
         }
-    }, 
+    },
     getCartByUserId: async (req, res, next) => {
         try {
-            let DTO = cartService.getCartByUserId(req.user.userId, req.body.products);
-
+            let DTO = await cartService.getCartByUserId(req.user.userId);
             res.status(200).json(DTO);
         } catch (error) {
             next(error);

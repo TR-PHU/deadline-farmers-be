@@ -15,7 +15,7 @@ router.post(
     upload.single('image'),
     verifyToken,
     verifyAdmin,
-    productController.CreateProduct
+    productController.createProduct
 );
 router.delete('/delete-product/:id', verifyToken, verifyAdmin, productController.deleteProduct);
 

@@ -27,7 +27,7 @@ module.exports = {
                 rating,
                 categories,
             });
-            
+
             return {
                 statusCode: 201,
                 msg: 'ok',
@@ -41,7 +41,7 @@ module.exports = {
         try {
             if (qPage) {
                 qPage = parseInt(qPage);
-                qPage < 0 ? (qPage = 1) : qPage;
+                qPage < 1 ? (qPage = 1) : qPage;
                 const startIndex = (qPage - 1) * PAGE_SIZE;
                 const products = await Product.find().skip(startIndex).limit(PAGE_SIZE);
                 return {
@@ -59,36 +59,44 @@ module.exports = {
             throw new CreateError(error);
         }
     },
-    deleteProductById: async ( id ) => {
+    deleteProductById: async (id) => {
         try {
             const res = await Product.deleteOne({ _id: id });
 
             console.log(res);
             return {
                 statusCode: 202,
-                msg: "Delete Success!"
-            }
+                msg: 'Delete Success!',
+            };
         } catch (error) {
-            throw new CreateError(500, "Internal server errors");
+            throw new CreateError(500, 'Internal server errors');
         }
     },
-    updateProductById: async( id, body ) => {
+    updateProductById: async (id, body) => {
         try {
             const { name, description, image, price, quantity, rating, catagories } = body;
-            console.log(catagories)
-            const res = await Product.updateOne( {_id : id}, {
-                $set: {
-                    name, description, image, price, quantity, rating, catagories
+            console.log(catagories);
+            const res = await Product.updateOne(
+                { _id: id },
+                {
+                    $set: {
+                        name,
+                        description,
+                        image,
+                        price,
+                        quantity,
+                        rating,
+                        catagories,
+                    },
                 }
-            })
+            );
 
             return {
                 statusCode: 204,
-                msg: "ok"
+                msg: 'ok',
             };
-
         } catch (error) {
-            throw new CreateError(500, "Interval server errors")
+            throw new CreateError(500, 'Interval server errors');
         }
-    }
+    },
 };

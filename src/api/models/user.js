@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema(
     {
         phone: {
-            type: Number
+            type: Number,
         },
         address: {
-            type: String
+            type: String,
         },
         username: {
             type: String,
@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema(
             type: String,
             minlength: 5,
             require: true,
+        },
+        refreshToken: {
+            type: String,
+            default: null,
         },
     },
     { timestamps: true },

@@ -31,7 +31,7 @@ module.exports = {
     deleteProduct: async (req, res, next) => {
         try {
             const DTO = await productService.deleteProductById(req.params.id);
-            
+
             return res.json(DTO);
         } catch (error) {
             next(error);
@@ -45,6 +45,5 @@ module.exports = {
         } catch (error) {
             next(error);
         }
-    }
-    
+    },
 };

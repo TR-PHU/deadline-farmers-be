@@ -39,10 +39,20 @@ module.exports = {
             next(error);
         }
     },
-    signIn: async (req, res, next) => {
+    token: async (req, res, next) => {
         try {
-            let DTO = await authService.signIn(req.body);
-            res.status(200).json(DTO);
+            const DTO = await authService.token(req.body);
+
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    logout: async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const DTO = await authService.logout(userId);
+            res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
         }

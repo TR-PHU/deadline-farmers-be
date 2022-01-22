@@ -43,6 +43,7 @@ module.exports = {
                 msg: 'Create Success!',
             };
         } catch (error) {
+            if(error) throw error;
             throw new CreateError(500, 'Internal server errors');
         }
     },

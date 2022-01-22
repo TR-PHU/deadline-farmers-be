@@ -15,7 +15,7 @@ module.exports = {
                     throw new createError(500, 'Interval server errors');
                 }
             }
-
+            
             const findCart = await Cart.find({ userId });
             if (findCart.length > 0) {
                 const res = await Cart.updateOne(

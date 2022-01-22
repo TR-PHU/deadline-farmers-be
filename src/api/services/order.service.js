@@ -3,7 +3,7 @@ const Cart = require('../models/cart');
 const Order = require('../models/order');
 
 module.exports = {
-    addOrder: async (userId) => {
+    addOrder: async (userId, products) => {
         try {
             const newOrder = new Order({ userId, products });
             await newOrder.save();

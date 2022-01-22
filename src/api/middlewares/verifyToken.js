@@ -11,16 +11,14 @@ const verifyToken = (req, res, next) => {
             message: 'UNAUTHORIZED',
         });
     }
-    const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decodeToken) {
-        return res.status(403).json({
-            statusCode: 403,
-            message: 'Token is not valid!',
-        });
-    }
+    try {
+        const decodeToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decodeToken;
-    next();
+        req.user = decodeToken;
+        next();
+    } catch (error) {
+        next(new createError(403, error.message));
+    }
 };
 
 module.exports = {

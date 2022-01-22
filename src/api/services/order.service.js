@@ -21,10 +21,17 @@ module.exports = {
     getOrder: async (Id) => {
         try {
             const res = await Order.find({ userId: Id });
+<<<<<<< HEAD
+            if (res.length == 0) {
+                return {
+                    statusCode: 200,
+                    messgae: 'Getting order successful',
+=======
             if (res.length === 0) {
                 return {
                     statusCode: 200,
                     message: 'Getting order successful',
+>>>>>>> 6d6b940d6bc3db4d294c5ee3f956cfd7628b0e8a
                     order: res,
                 };
             }

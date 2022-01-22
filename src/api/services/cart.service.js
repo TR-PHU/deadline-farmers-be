@@ -6,13 +6,13 @@ module.exports = {
             if (products.length == 0) {
                 const res = await Cart.deleteOne({ userId });
                 console.log(res);
-                if(res.deletedCount == 1) {
+                if (res.deletedCount == 1) {
                     return {
                         statusCode: 200,
-                        msg: 'Ok'
-                    }
-                }else {
-                    throw new createError(500, "Interval server errors");
+                        msg: 'Ok',
+                    };
+                } else {
+                    throw new createError(500, 'Interval server errors');
                 }
             }
 
@@ -21,7 +21,7 @@ module.exports = {
                 const res = await Cart.updateOne(
                     { userId },
                     {
-                        $set: { products }
+                        $set: { products },
                     }
                 );
                 console.log(res);

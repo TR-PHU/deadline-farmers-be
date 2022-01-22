@@ -1,15 +1,15 @@
 const productService = require('../services/product.service');
 module.exports = {
-    GetProductById: async (req, res, next) => {
+    getProductById: async (req, res, next) => {
         try {
-            const DTO = await productService.GetProductById(req.params.id);
+            const DTO = await productService.getProductById(req.params.id);
 
             res.status(200).json(DTO);
         } catch (error) {
             next(error);
         }
     },
-    CreateProduct: async (req, res, next) => {
+    createProduct: async (req, res, next) => {
         try {
             const DTO = await productService.CreateProduct(req);
             res.status(DTO.statusCode).json({ message: DTO.msg });
@@ -26,4 +26,23 @@ module.exports = {
             next(error);
         }
     },
+    deleteProduct: async (req, res, next) => {
+        try {
+            const DTO = await productService.deleteProductById(req.params.id);
+            
+            return res.json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateProductById: async (req, res, next) => {
+        try {
+            const DTO = await productService.updateProductById(req.params.id, req.body);
+
+            res.status(200).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    }
+    
 };

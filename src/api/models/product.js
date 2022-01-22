@@ -1,4 +1,3 @@
-const { string } = require('joi');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -31,8 +30,8 @@ const ProductSchema = new Schema(
             default: 0,
         },
         categories: {
-            type: Array,
-            required: true
+            type: [String],
+            default: []
         },
     },
     { timestamps: true },

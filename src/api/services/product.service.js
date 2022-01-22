@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const CreateError = require('http-errors');
 
 module.exports = {
-    GetProductById: async (productId) => {
+    getProductById: async (productId) => {
         try {
             const res = await Product.find({ _id: productId });
             console.log(res);
@@ -15,9 +15,9 @@ module.exports = {
             throw new CreateError(500, 'Internal server errors');
         }
     },
-    CreateProduct: async (body) => {
+    createProduct: async (body) => {
         try {
-            const { name, image, price, catagories, quantity, description, rating } = body;
+            const { name, image, price, categories, quantity, description, rating } = body;
             const res = await Product.create({
                 name,
                 image,
@@ -25,9 +25,9 @@ module.exports = {
                 quantity,
                 description,
                 rating,
-                catagories,
+                categories,
             });
-            console.log(res);
+            
             return {
                 statusCode: 201,
                 msg: 'ok',
@@ -72,11 +72,23 @@ module.exports = {
             throw new CreateError(500, "Internal server errors");
         }
     },
-    modifyProductById: async( id, {} ) => {
+    updateProductById: async( id, body ) => {
         try {
-            
+            const { name, description, image, price, quantity, rating, catagories } = body;
+            console.log(catagories)
+            const res = await Product.updateOne( {_id : id}, {
+                $set: {
+                    name, description, image, price, quantity, rating, catagories
+                }
+            })
+
+            return {
+                statusCode: 204,
+                msg: "ok"
+            };
+
         } catch (error) {
-            
+            throw new CreateError(500, "Interval server errors")
         }
     }
 };

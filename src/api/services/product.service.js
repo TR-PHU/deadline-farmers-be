@@ -1,9 +1,12 @@
-const Product = require("../models/product");
-const CreateError = require("http-errors");
-const createError = require("http-errors");
-const cloudinary = require("../configs/cloudinary.config");
-const mongoose = require("mongoose");
-const upload = require("../configs/multer.config");
+const Product = require('../models/product');
+const CreateError = require('http-errors');
+const createError = require('http-errors');
+const cloudinary = require('../configs/cloudinary.config');
+const mongoose = require('mongoose');
+const upload = require('../configs/multer.config');
+const fs = require('fs');
+const util = require('util');
+const deleteFile = util.promisify(fs.unlink);
 module.exports = {
     getProductById: async (productId) => {
         try {
@@ -25,6 +28,7 @@ module.exports = {
         try {
             const { name, price, category, quantity, description, rating } = req.body;
             const result = await cloudinary.uploader.upload(req.file.path);
+            await deleteFile(req.file.path);
             let product = new Product({
                 name,
                 image: result.secure_url,
@@ -35,7 +39,6 @@ module.exports = {
                 description,
                 rating,
             });
-            console.log(result);
             //Save product
             await product.save();
             return {
@@ -43,7 +46,13 @@ module.exports = {
                 msg: 'Create Success!',
             };
         } catch (error) {
+<<<<<<< HEAD
             if(error) throw error;
+=======
+            if (error) {
+                throw error;
+            }
+>>>>>>> 8d8a1d339ec7a933c69aec105915c7ba88393ba1
             throw new CreateError(500, 'Internal server errors');
         }
     },
@@ -72,54 +81,57 @@ module.exports = {
     },
     deleteProductById: async (id) => {
         try {
-            if(!mongoose.Types.ObjectId.isValid(id)) {
-                throw new createError(404, "Product not found");
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                throw new createError(404, 'Product not found');
             }
             const product = await Product.findById(id);
 
-            if(!product) {
-                throw new createError(404, "Product not found");
+            if (!product) {
+                throw new createError(404, 'Product not found');
             }
             await cloudinary.uploader.destroy(product.cloudinary_id);
 
             await product.remove();
-            
+
             return {
                 statusCode: 202,
                 msg: 'Delete Success!',
             };
         } catch (error) {
-            if(error) throw error;
+            if (error) throw error;
             throw new CreateError(500, 'Internal server errors');
         }
     },
     updateProductById: async ({ params, body, file }) => {
         try {
             const { name, description, price, quantity, rating, category } = body;
-            if(!mongoose.Types.ObjectId.isValid(id)) {
-                throw new createError(404, "Product not found");
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                throw new createError(404, 'Product not found');
             }
-            
+
             let product = await Product.findById(params.id);
 
-            if(!product) {
-                throw new createError(404, "Product not found");
+            if (!product) {
+                throw new createError(404, 'Product not found');
             }
             //delete image in cloudinary
             await cloudinary.uploader.destroy(product.cloudinary_id);
             const result = await cloudinary.uploader.upload(file.path);
-            product = await Product.updateOne( { _id: params.id }, {
-                $set: {
-                    name,
-                    description,
-                    image: result.secure_url,
-                    cloudinary_id: result.public_id,
-                    price,
-                    quantity,
-                    rating,
-                    category, 
+            product = await Product.updateOne(
+                { _id: params.id },
+                {
+                    $set: {
+                        name,
+                        description,
+                        image: result.secure_url,
+                        cloudinary_id: result.public_id,
+                        price,
+                        quantity,
+                        rating,
+                        category,
+                    },
                 }
-            });
+            );
 
             return {
                 statusCode: 204,

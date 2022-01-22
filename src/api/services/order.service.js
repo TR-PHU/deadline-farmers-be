@@ -5,8 +5,6 @@ const Order = require('../models/order');
 module.exports = {
     addOrder: async (userId) => {
         try {
-            const deleteCart = await Cart.findOneAndDelete({ userId });
-            const { products } = deleteCart;
             const newOrder = new Order({ userId, products });
             await newOrder.save();
             return {

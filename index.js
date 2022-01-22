@@ -5,6 +5,9 @@ const PORT = 5000 || process.env.PORT;
 const api = require('./src/api/routes/index');
 const connectDatabase = require('./src/api/configs/db.config');
 const createError = require('http-errors');
+const cors = require('cors');
+
+app.use(cors());
 app.use(express.json());
 connectDatabase();
 

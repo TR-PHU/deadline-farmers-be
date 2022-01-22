@@ -1,7 +1,7 @@
 const productService = require('../services/product.service');
 
 module.exports = {
-    GetProductById: async (req, res, next) => {
+    cetProductById: async (req, res, next) => {
         try {
             const DTO = await productService.GetProductById(req.params.id);
 
@@ -10,7 +10,7 @@ module.exports = {
             next(error);
         }
     },
-    CreateProduct: async (req, res, next) => {
+    createProduct: async (req, res, next) => {
         try {
             const DTO = await productService.CreateProduct(req.body);
 
@@ -28,4 +28,21 @@ module.exports = {
             next(error);
         }
     },
+    deleteProduct: async (req, res, next) => {
+        try {
+            const DTO = await productService.DeleteProductById(req.params.id);
+            
+            return res.json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    modifyProductById: async (req, res, next) => {
+        try {
+            const DTO = await productService.modifyProductById(req.params.id, res.body);
+        } catch (error) {
+            next(error);
+        }
+    }
+    
 };

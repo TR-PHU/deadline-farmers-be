@@ -30,17 +30,14 @@ module.exports = {
     try {
       const DTO = await productService.deleteProductById(req.params.id);
 
-      return res.json(DTO);
-    } catch (error) {
-      next(error);
-    }
-  },
-  updateProductById: async (req, res, next) => {
-    try {
-      const DTO = await productService.updateProductById(
-        req.params.id,
-        req.body
-      );
+            return res.json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateProductById: async (req, res, next) => {
+        try {
+            const DTO = await productService.updateProductById(req);
 
       res.status(200).json(DTO);
     } catch (error) {

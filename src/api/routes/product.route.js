@@ -7,13 +7,7 @@ const upload = multer({ dest: "uploads/" });
 //get all product
 router.get("/", productController.getAllProduct);
 //create product(Admin role)
-router.post(
-  "/",
-  upload.single("image"),
-  verifyToken,
-  verifyAdmin,
-  productController.createProduct
-);
+router.post('/', verifyToken, verifyAdmin, upload.single('image'), productController.createProduct);
 //delete product
 router.delete(
   "/:id",
@@ -22,11 +16,6 @@ router.delete(
   productController.deleteProduct
 );
 //update product
-router.put(
-  "/:id",
-  verifyToken,
-  verifyAdmin,
-  productController.updateProductById
-);
+router.put('/:id', verifyToken, verifyAdmin, upload.single("image"),productController.updateProductById);
 
 module.exports = router;

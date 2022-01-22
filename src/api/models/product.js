@@ -28,7 +28,7 @@ const ProductSchema = new Schema(
       min: 0,
       default: 0,
     },
-    categories: {
+    category: {
       type: String,
     },
     cloudinary_id: {

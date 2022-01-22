@@ -37,7 +37,7 @@ module.exports = {
     },
     updateProductById: async (req, res, next) => {
         try {
-            const DTO = await productService.updateProductById(req.params.id, req.body);
+            const DTO = await productService.updateProductById(req);
 
             res.status(200).json(DTO);
         } catch (error) {

@@ -35,7 +35,7 @@ module.exports = {
                 description: description,
                 rating: rating,
             });
-            console.log(result)
+            console.log(result);
             //Save product
             await product.save();
             return {
@@ -71,13 +71,12 @@ module.exports = {
     },
     deleteProductById: async (id) => {
         try {
-            const resDB = await Product.findById(id);
-            console.log('as')
-            const resCloud = await cloudinary.uploader.destroy(resDB[0].cloudinary_id);
+            const product = await Product.findById(id);
+
+            const resCloud = await cloudinary.uploader.destroy(product.cloudinary_id);
 
             console.log(resCloud);
-
-            await resDB.remove()
+            await resDB.remove();
             return {
                 statusCode: 202,
                 msg: 'Delete Success!',
@@ -86,25 +85,27 @@ module.exports = {
             throw new CreateError(500, 'Internal server errors');
         }
     },
-    updateProductById: async (id, body) => {
+    updateProductById: async ({ params, body, file }) => {
         try {
-            const { name, description, image, price, quantity, rating, catagories } = body;
-            console.log(catagories);
-            const res = await Product.updateOne(
-                { _id: id },
-                {
-                    $set: {
-                        name,
-                        description,
-                        image,
-                        price,
-                        quantity,
-                        rating,
-                        catagories,
-                    },
-                }
-            );
+            const { name, description, price, quantity, rating, category } = body;
 
+            let product = await Product.findById(params.id);
+            //delete image in cloudinary
+            await cloudinary.uploader.destroy(product.cloudinary_id);
+            const result = await cloudinary.uploader.upload(file.path);
+            const data = {
+                name,
+                description,
+                image: result.secure_url,
+                cloudinary_id: result.public_id,
+                price,
+                quantity,
+                rating,
+                category,
+            };
+            product = await Product.findByIdAndUpdate(params.id, data, { new: true });
+
+            console.log(product);
             return {
                 statusCode: 204,
                 msg: 'ok',

@@ -2,10 +2,14 @@ const Product = require('../models/product');
 const CreateError = require('http-errors');
 const createError = require('http-errors');
 const cloudinary = require('../configs/cloudinary.config');
+const mongoose = require('mongoose');
 const upload = require('../configs/multer.config');
 module.exports = {
     getProductById: async (productId) => {
         try {
+            if (!mongoose.Types.ObjectId.isValid(productId)) {
+                throw new createError(404, 'Product not found!');
+            }
             const res = await Product.find({ _id: productId });
             console.log(res);
             if (!res) {
@@ -13,7 +17,7 @@ module.exports = {
             }
             return res;
         } catch (error) {
-            if (error) throw error;
+            if(error) throw error
             throw new CreateError(500, 'Internal server errors');
         }
     },
@@ -35,7 +39,7 @@ module.exports = {
             await product.save();
             return {
                 statusCode: 200,
-                msg: 'Successfully created a product',  
+                msg: 'Successfully created a product',
             };
         } catch (error) {
             throw new CreateError(500, 'Internal server errors');
@@ -64,36 +68,44 @@ module.exports = {
             throw new CreateError(error);
         }
     },
-    deleteProductById: async ( id ) => {
+    deleteProductById: async (id) => {
         try {
             const res = await Product.deleteOne({ _id: id });
 
             console.log(res);
             return {
                 statusCode: 202,
-                msg: "Delete Success!"
-            }
+                msg: 'Delete Success!',
+            };
         } catch (error) {
-            throw new CreateError(500, "Internal server errors");
+            throw new CreateError(500, 'Internal server errors');
         }
     },
-    updateProductById: async( id, body ) => {
+    updateProductById: async (id, body) => {
         try {
             const { name, description, image, price, quantity, rating, catagories } = body;
-            console.log(catagories)
-            const res = await Product.updateOne( {_id : id}, {
-                $set: {
-                    name, description, image, price, quantity, rating, catagories
+            console.log(catagories);
+            const res = await Product.updateOne(
+                { _id: id },
+                {
+                    $set: {
+                        name,
+                        description,
+                        image,
+                        price,
+                        quantity,
+                        rating,
+                        catagories,
+                    },
                 }
-            })
+            );
 
             return {
                 statusCode: 204,
-                msg: "ok"
+                msg: 'ok',
             };
-
         } catch (error) {
-            throw new CreateError(500, "Interval server errors")
+            throw new CreateError(500, 'Interval server errors');
         }
-    }
+    },
 };

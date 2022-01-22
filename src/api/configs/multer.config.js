@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 
 //Multer config
-storage: multer.diskStorage({
+module.exports = multer({
     storage: multer.diskStorage({}),
     fileFilter: (req, file, cb) => {
         let ext = path.extname(file.originalname);
@@ -12,5 +12,6 @@ storage: multer.diskStorage({
         }
         cb(null, true);
     },
-});
+})
+
 

@@ -5,13 +5,13 @@ const { verifyToken } = require('../middlewares/verifyToken')
 
 router.get('/get-all-products', productController.getAllProduct);
 //get product by id
-router.get('/:id', productController.cetProductById);
+router.get('/:id', productController.getProductById);
 
 //create product(Admin role)
 router.post('/', productController.createProduct);
 
 router.delete('/delete-product/:id', verifyToken, verifyAdmin, productController.deleteProduct);
 
-router.put('/update-product/:id', verifyToken, verifyAdmin, productController.modifyProductById);
+router.put('/update-product/:id', verifyToken, verifyAdmin, productController.updateProductById);
 
 module.exports = router;

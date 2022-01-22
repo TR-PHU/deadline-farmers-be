@@ -1,9 +1,9 @@
 const productService = require('../services/product.service');
 
 module.exports = {
-    cetProductById: async (req, res, next) => {
+    getProductById: async (req, res, next) => {
         try {
-            const DTO = await productService.GetProductById(req.params.id);
+            const DTO = await productService.getProductById(req.params.id);
 
             res.status(200).json(DTO);
         } catch (error) {
@@ -12,7 +12,7 @@ module.exports = {
     },
     createProduct: async (req, res, next) => {
         try {
-            const DTO = await productService.CreateProduct(req.body);
+            const DTO = await productService.createProduct(req.body);
 
             res.status(DTO.statusCode).json({ message: DTO.msg });
         } catch (error) {
@@ -30,16 +30,18 @@ module.exports = {
     },
     deleteProduct: async (req, res, next) => {
         try {
-            const DTO = await productService.DeleteProductById(req.params.id);
+            const DTO = await productService.deleteProductById(req.params.id);
             
             return res.json(DTO);
         } catch (error) {
             next(error);
         }
     },
-    modifyProductById: async (req, res, next) => {
+    updateProductById: async (req, res, next) => {
         try {
-            const DTO = await productService.modifyProductById(req.params.id, res.body);
+            const DTO = await productService.updateProductById(req.params.id, req.body);
+
+            res.status(200).json(DTO);
         } catch (error) {
             next(error);
         }

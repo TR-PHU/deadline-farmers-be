@@ -18,17 +18,13 @@ module.exports = {
 
             const findCart = await Cart.find({ userId });
             if (findCart.length > 0) {
-                const productsList = findCart[0].products.concat(products);
-
                 const res = await Cart.updateOne(
                     { userId },
                     {
-                        $set: {
-                            products: productsList,
-                        },
+                        $set: { products },
                     }
                 );
-
+                console.log(res);
                 return {
                     statusCode: 201,
                     msg: 'ok',

@@ -46,9 +46,13 @@ module.exports = {
                 msg: 'Create Success!',
             };
         } catch (error) {
+<<<<<<< HEAD
+            if(error) throw error;
+=======
             if (error) {
                 throw error;
             }
+>>>>>>> 8d8a1d339ec7a933c69aec105915c7ba88393ba1
             throw new CreateError(500, 'Internal server errors');
         }
     },

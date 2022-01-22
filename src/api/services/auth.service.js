@@ -53,7 +53,7 @@ module.exports = {
                     expiresIn: '5h',
                 }
             );
-            updateRefreshToken(responseDB._id, refreshToken);
+            await updateRefreshToken(responseDB._id, refreshToken);
             return {
                 statusCode: 201,
                 message: 'Create user success!',
@@ -96,6 +96,7 @@ module.exports = {
                             expiresIn: '5h',
                         }
                     );
+                    await updateRefreshToken(filterUser[0]._id, refreshToken);
                     return {
                         error: false,
                         msg: 'Login success',
@@ -185,7 +186,7 @@ module.exports = {
                 }
             );
 
-            updateRefreshToken(user._id, refreshToken);
+            await updateRefreshToken(user._id, refreshToken);
             return {
                 statusCode: 200,
                 message: 'Excellent process',

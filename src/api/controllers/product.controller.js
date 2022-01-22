@@ -1,5 +1,4 @@
 const productService = require('../services/product.service');
-
 module.exports = {
     getProductById: async (req, res, next) => {
         try {
@@ -12,8 +11,7 @@ module.exports = {
     },
     createProduct: async (req, res, next) => {
         try {
-            const DTO = await productService.createProduct(req.body);
-
+            const DTO = await productService.CreateProduct(req);
             res.status(DTO.statusCode).json({ message: DTO.msg });
         } catch (error) {
             next(error);

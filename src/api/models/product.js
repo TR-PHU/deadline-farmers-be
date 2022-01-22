@@ -32,6 +32,9 @@ const ProductSchema = new Schema(
             type: [String],
             default: []
         },
+        cloudinary_id: {
+            type: String
+        }
     },
     { timestamps: true },
     { collection: 'product' }

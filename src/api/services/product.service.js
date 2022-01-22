@@ -35,6 +35,7 @@ module.exports = {
                 description: description,
                 rating: rating,
             });
+            console.log(result)
             //Save product
             await product.save();
             return {
@@ -70,9 +71,13 @@ module.exports = {
     },
     deleteProductById: async (id) => {
         try {
-            const res = await Product.deleteOne({ _id: id });
+            const resDB = await Product.findById(id);
+            console.log('as')
+            const resCloud = await cloudinary.uploader.destroy(resDB[0].cloudinary_id);
 
-            console.log(res);
+            console.log(resCloud);
+
+            await resDB.remove()
             return {
                 statusCode: 202,
                 msg: 'Delete Success!',

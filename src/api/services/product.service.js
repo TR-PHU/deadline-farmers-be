@@ -1,6 +1,8 @@
 const Product = require('../models/product');
 const CreateError = require('http-errors');
-
+const createError = require('http-errors');
+const cloudinary = require('../configs/cloudinary.config');
+const upload = require('../configs/multer.config');
 module.exports = {
     GetProductById: async (productId) => {
         try {
@@ -15,22 +17,25 @@ module.exports = {
             throw new CreateError(500, 'Internal server errors');
         }
     },
-    CreateProduct: async (body) => {
+    CreateProduct: async (req) => {
         try {
-            const { name, image, price, catagories, quantity, description, rating } = body;
-            const res = await Product.create({
-                name,
-                image,
-                price,
-                quantity,
-                description,
-                rating,
-                catagories,
+            const { name, price, categories, quantity, description, rating } = req.body;
+            const result = await cloudinary.uploader.upload(req.file.path);
+            let product = new Product({
+                name: name,
+                image: result.secure_url,
+                cloudinary_id: result.public_id,
+                price: price,
+                categories: categories,
+                quantity: quantity,
+                description: description,
+                rating: rating,
             });
-            console.log(res);
+            //Save product
+            await product.save();
             return {
-                statusCode: 201,
-                msg: 'ok',
+                statusCode: 200,
+                msg: 'Successfully created a product',  
             };
         } catch (error) {
             throw new CreateError(500, 'Internal server errors');

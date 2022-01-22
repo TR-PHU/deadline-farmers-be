@@ -14,7 +14,6 @@ const ProductSchema = new Schema(
         },
         image: {
             type: String,
-            required: true,
         },
         price: {
             type: Number,
@@ -32,7 +31,7 @@ const ProductSchema = new Schema(
         },
         categories: {
             type: Array,
-            required: true
+            required: true,
         },
     },
     { timestamps: true },

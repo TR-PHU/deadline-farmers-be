@@ -6,6 +6,7 @@ const sendMail = require('../../commons/emails/sendMail');
 const { v4: uuidv4 } = require('uuid');
 const resetToken = require('../models/resetToken');
 
+
 module.exports = {
     Register: async (body) => {
         const { username, password, email, address, phone, fullname } = body;

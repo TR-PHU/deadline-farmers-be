@@ -46,13 +46,7 @@ module.exports = {
                 msg: 'Create Success!',
             };
         } catch (error) {
-<<<<<<< HEAD
             if(error) throw error;
-=======
-            if (error) {
-                throw error;
-            }
->>>>>>> 8d8a1d339ec7a933c69aec105915c7ba88393ba1
             throw new CreateError(500, 'Internal server errors');
         }
     },
@@ -104,8 +98,9 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
+            
             const { name, description, price, quantity, rating, category } = body;
-            if (!mongoose.Types.ObjectId.isValid(id)) {
+            if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }
 
@@ -117,6 +112,8 @@ module.exports = {
             //delete image in cloudinary
             await cloudinary.uploader.destroy(product.cloudinary_id);
             const result = await cloudinary.uploader.upload(file.path);
+
+            await deleteFile(file.path);
             product = await Product.updateOne(
                 { _id: params.id },
                 {
@@ -138,6 +135,7 @@ module.exports = {
                 msg: 'Update Success!',
             };
         } catch (error) {
+            if(error) throw error;
             throw new CreateError(500, 'Interval server errors');
         }
     },

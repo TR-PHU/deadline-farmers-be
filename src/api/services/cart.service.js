@@ -47,13 +47,13 @@ module.exports = {
         try {
             let res = await Cart.find({ userId: id });
 
-            if (!res.length) {
+            if (res.length == 0) {
                 return [];
             }
 
             for (let i of res[0].products) {
                 const resDB = await Product.findById(i.productId);
-                if (resDB == null) throw createError(404, 'Product does not exist');
+                if (resDB == null) throw createError(404, 'Product in cart not found');
                 i.name = resDB.name;
                 i.image = resDB.image;
             }

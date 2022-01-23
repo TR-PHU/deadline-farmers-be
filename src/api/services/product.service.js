@@ -1,19 +1,17 @@
 const Product = require('../models/product');
 const CreateError = require('http-errors');
-const createError = require('http-errors');
 const cloudinary = require('../configs/cloudinary.config');
 const mongoose = require('mongoose');
-const fs = require('fs');
-const util = require('util');
-const deleteFile = util.promisify(fs.unlink);
+
 module.exports = {
     getProductById: async (productId) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(productId)) {
-                throw new createError(404, 'Product not found!');
+                throw new CreateError(404, 'Product not found!');
             }
             const res = await Product.find({ _id: productId });
-            if (!res) {
+
+            if (res.length == 0) {
                 throw new CreateError(404, 'Product not found!');
             }
             return res;
@@ -24,7 +22,7 @@ module.exports = {
     },
     CreateProduct: async (req) => {
         try {
-            const { name, price, category, description, rating } = req.body;
+            const { name, price, category, description, rating, quantity } = req.body;
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
@@ -96,12 +94,12 @@ module.exports = {
     deleteProductById: async (id) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) {
-                throw new createError(404, 'Product not found');
+                throw new CreateError(404, 'Product not found');
             }
             const product = await Product.findById(id);
 
             if (!product) {
-                throw new createError(404, 'Product not found');
+                throw new CreateError(404, 'Product not found');
             }
             await cloudinary.uploader.destroy(product.cloudinary_id);
 
@@ -118,27 +116,26 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-            const { name, description, price, rating, category } = body;
+            const { name, description, price, rating, category, quantity } = body;
 
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
-                throw new createError(404, 'Product not found');
+                throw new CreateError(404, 'Product not found');
             }
-
+            console.log(body);
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
-            if (!req.file) throw new CreateError(400, 'Please upload file!');
+            if (!file) throw new CreateError(400, 'Please upload image!');
 
             let product = await Product.findById(params.id);
 
             if (!product) {
-                throw new createError(404, 'Product not found');
+                throw new CreateError(404, 'Product not found');
             }
             //delete image in cloudinary
             await cloudinary.uploader.destroy(product.cloudinary_id);
             const result = await cloudinary.uploader.upload(file.path);
 
-            await deleteFile(file.path);
             product = await Product.updateOne(
                 { _id: params.id },
                 {

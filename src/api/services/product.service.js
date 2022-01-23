@@ -25,7 +25,7 @@ module.exports = {
     },
     CreateProduct: async (req) => {
         try {
-            const { name, price, category, description, rating, quantity } = req.body;
+            const { name, price, category, description, rating } = req.body;
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
@@ -119,7 +119,8 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-            const { name, description, price, quantity, rating, category } = body;
+            const { name, description, price, rating, category } = body;
+
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }

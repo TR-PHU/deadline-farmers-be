@@ -112,7 +112,6 @@ module.exports = {
             }
             if(!req.file) throw new CreateError(400, "Please upload file!")
 
-
             let product = await Product.findById(params.id);
 
             if (!product) {

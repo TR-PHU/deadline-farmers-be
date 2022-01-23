@@ -1,5 +1,6 @@
 const Cart = require('../models/cart');
 const createError = require('http-errors');
+const Product = require('../models/product');
 const mongoose = require('mongoose')
 
 module.exports = {
@@ -45,10 +46,19 @@ module.exports = {
     },
     getCartByUserId: async (id) => {
         try {
-            const res = await Cart.find({ userId: id });
-            console.log(res);
+            let res = await Cart.find({ userId: id });
+            if(!res.length) {
+                return [];
+            }
+            for(let i of res[0].products) {
+                const resDB = await Product.findById(i.productId)
+                i.name = resDB.name;
+                i.image = resDB.image
+            }
+            
             return res;
         } catch (error) {
+            if(error) throw error;
             throw new createError(500, 'Interval server errors');
         }
     },

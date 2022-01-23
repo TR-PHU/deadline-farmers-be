@@ -121,7 +121,7 @@ module.exports = {
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new CreateError(404, 'Product not found');
             }
-            console.log(body)
+            console.log(body);
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
@@ -169,13 +169,32 @@ module.exports = {
             throw new CreateError(500, 'Interval server errors');
         }
     },
-    searchProduct: async ({ name }) => {
+    searchProduct: async ({ name, category }) => {
         try {
-            const res = await Product.find({ name: { $regex: name } });
-            return {
-                msg: 'successfully searched',
-                res,
-            };
+            if (!category && !name) {
+                throw new CreateError(404, 'Please type in category or name');
+            } else if (!category) {
+                const res = await Product.find({ name: { $regex: name } });
+                return {
+                    msg: 'successfully searched',
+                    res,
+                };
+            } else if (!name) {
+                const res = await Product.find({ category: { $regex: category } });
+                return {
+                    msg: 'successfully searched',
+                    res,
+                };
+            } else {
+                const res = await Product.find({
+                    name: { $regex: name },
+                    category: { $regex: category },
+                });
+                return {
+                    msg: 'successfully searched',
+                    res,
+                };
+            }
         } catch (error) {
             if (error) throw error;
             throw new CreateError(500, 'Interval server errors');

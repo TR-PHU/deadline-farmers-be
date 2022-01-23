@@ -47,7 +47,8 @@ module.exports = {
     },
     searchProduct: async (req, res, next) => {
         try {
-            const DTO = await productService.searchProduct(req.body);
+            console.log(req.query);
+            const DTO = await productService.searchProduct(req.query);
             res.status(200).json(DTO);
         } catch (error) {
             next(error);

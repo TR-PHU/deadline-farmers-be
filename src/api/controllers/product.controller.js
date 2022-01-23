@@ -19,8 +19,9 @@ module.exports = {
     },
     getAllProduct: async (req, res, next) => {
         try {
-            let qPage = req.query.page;
-            const DTO = await productService.getAllProduct(qPage);
+            console.log(req.query);
+            const { page: qPage, sort: qSort } = req.query;
+            const DTO = await productService.getAllProduct(qPage, qSort);
             res.status(200).json(DTO);
         } catch (error) {
             next(error);

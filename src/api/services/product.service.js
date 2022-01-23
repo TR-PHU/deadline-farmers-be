@@ -3,7 +3,6 @@ const CreateError = require('http-errors');
 const createError = require('http-errors');
 const cloudinary = require('../configs/cloudinary.config');
 const mongoose = require('mongoose');
-const upload = require('../configs/multer.config');
 const fs = require('fs');
 const util = require('util');
 const deleteFile = util.promisify(fs.unlink);
@@ -32,7 +31,6 @@ module.exports = {
             }
             if (!req.file) throw new CreateError(400, 'Please upload file!');
             const result = await cloudinary.uploader.upload(req.file.path);
-            await deleteFile(req.file.path);
             let product = new Product({
                 name,
                 image: result.secure_url,

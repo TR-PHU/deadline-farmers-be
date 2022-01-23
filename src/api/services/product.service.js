@@ -101,11 +101,17 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-            
             const { name, description, price, rating, category } = body;
+            
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }
+
+            if(!name || !description || !price) {
+                throw new CreateError(400, "Invalid input");
+            }
+            if(!req.file) throw new CreateError(400, "Please upload file!")
+
 
             let product = await Product.findById(params.id);
 

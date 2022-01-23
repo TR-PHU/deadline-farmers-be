@@ -26,15 +26,11 @@ module.exports = {
     },
     CreateProduct: async (req) => {
         try {
-<<<<<<< HEAD
-            const { name, price, category, quantity, description, rating } = req.body;
-=======
             const { name, price, category, description, rating } = req.body;
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
             if (!req.file) throw new CreateError(400, 'Please upload file!');
->>>>>>> d9de4f4c5def927cfadc4a35a2f8972037c7a8ea
             const result = await cloudinary.uploader.upload(req.file.path);
             await deleteFile(req.file.path);
             let product = new Product({
@@ -125,24 +121,17 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-<<<<<<< HEAD
-            const { name, description, price, quantity, rating, category } = body;
-=======
             const { name, description, price, rating, category } = body;
 
->>>>>>> d9de4f4c5def927cfadc4a35a2f8972037c7a8ea
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }
 
-<<<<<<< HEAD
-=======
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
             if (!req.file) throw new CreateError(400, 'Please upload file!');
 
->>>>>>> d9de4f4c5def927cfadc4a35a2f8972037c7a8ea
             let product = await Product.findById(params.id);
 
             if (!product) {
@@ -175,7 +164,6 @@ module.exports = {
             };
         } catch (error) {
             if (error) throw error;
-<<<<<<< HEAD
             throw new CreateError(500, 'Interval server errors');
         }
     },
@@ -188,8 +176,6 @@ module.exports = {
             };
         } catch (error) {
             if (error) throw error;
-=======
->>>>>>> d9de4f4c5def927cfadc4a35a2f8972037c7a8ea
             throw new CreateError(500, 'Interval server errors');
         }
     },

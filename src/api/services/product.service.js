@@ -119,8 +119,7 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-            const { name, description, price, rating, category } = body;
-
+            const { name, description, price, quantity, rating, category } = body;
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }

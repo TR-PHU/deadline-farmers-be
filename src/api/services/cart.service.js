@@ -17,7 +17,7 @@ module.exports = {
                     throw new createError(500, 'Interval server errors');
                 }
             }
-            
+
             const findCart = await Cart.find({ userId });
             if (findCart.length > 0) {
                 const res = await Cart.updateOne(
@@ -45,22 +45,22 @@ module.exports = {
     },
     getCartByUserId: async (id) => {
         try {
-
             let res = await Cart.find({ userId: id });
 
-            if(!res.length) {
+            if (!res.length) {
                 return [];
             }
 
-            for(let i of res[0].products) {
-                const resDB = await Product.findById(i.productId)
+            for (let i of res[0].products) {
+                const resDB = await Product.findById(i.productId);
+                if (resDB == null) throw createError(404, 'Product does not exist');
                 i.name = resDB.name;
-                i.image = resDB.image
+                i.image = resDB.image;
             }
-           
+
             return res;
         } catch (error) {
-            if(error) throw error;
+            if (error) throw error;
             throw new createError(500, 'Interval server errors');
         }
     },

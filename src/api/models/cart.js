@@ -9,16 +9,18 @@ const CartSchema = new Schema(
         },
         products: [
             {
-                productId: {
-                    type: String,
+                name: {
+                    type: String
                 },
+                image: {
+                    type: String
+                },
+                productId: String,
+                price: Number,
                 quantity: {
                     type: Number,
                     default: 1,
-                },
-                price: {
-                    type: Number,
-                },
+                }
             },
         ],
     },

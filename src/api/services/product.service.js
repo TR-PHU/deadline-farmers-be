@@ -11,7 +11,7 @@ module.exports = {
     getProductById: async (productId) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(productId)) {
-                throw new createError(404, 'Invalid input!');
+                throw new createError(404, 'Product not found!');
             }
             const res = await Product.find({ _id: productId });
             console.log(res);
@@ -26,11 +26,7 @@ module.exports = {
     },
     CreateProduct: async (req) => {
         try {
-            const { name, price, category, description, rating } = req.body;
-            if(!name || !description || !price) {
-                throw new CreateError(400, "Invalid input");
-            }
-            if(!req.file) throw new CreateError(400, "Please upload file!")
+            const { name, price, category, quantity, description, rating } = req.body;
             const result = await cloudinary.uploader.upload(req.file.path);
             await deleteFile(req.file.path);
             let product = new Product({
@@ -39,6 +35,7 @@ module.exports = {
                 cloudinary_id: result.public_id,
                 price,
                 category,
+                quantity,
                 description,
                 rating,
             });
@@ -49,9 +46,10 @@ module.exports = {
                 msg: 'Create Success!',
             };
         } catch (error) {
-            if(error) throw error;
+            if (error) throw error;
             throw new CreateError(500, 'Internal server errors');
         }
+        x;
     },
     getAllProduct: async (qPage) => {
         const PAGE_SIZE = 12;
@@ -79,7 +77,7 @@ module.exports = {
     deleteProductById: async (id) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) {
-                throw new createError(400, 'Invalid input!');
+                throw new createError(404, 'Product not found');
             }
             const product = await Product.findById(id);
 
@@ -101,17 +99,10 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-            const { name, description, price, rating, category } = body;
-            
+            const { name, description, price, quantity, rating, category } = body;
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }
-
-            if(!name || !description || !price) {
-                throw new CreateError(400, "Invalid input");
-            }
-            if(!req.file) throw new CreateError(400, "Please upload file!")
-
 
             let product = await Product.findById(params.id);
 
@@ -132,6 +123,7 @@ module.exports = {
                         image: result.secure_url,
                         cloudinary_id: result.public_id,
                         price,
+                        quantity,
                         rating,
                         category,
                     },
@@ -143,7 +135,19 @@ module.exports = {
                 msg: 'Update Success!',
             };
         } catch (error) {
-            if(error) throw error;
+            if (error) throw error;
+            throw new CreateError(500, 'Interval server errors');
+        }
+    },
+    searchProduct: async ({ name }) => {
+        try {
+            const res = await Product.find({ name: { $regex: name } });
+            return {
+                msg: 'successfully searched',
+                res,
+            };
+        } catch (error) {
+            if (error) throw error;
             throw new CreateError(500, 'Interval server errors');
         }
     },

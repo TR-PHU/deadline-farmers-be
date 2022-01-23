@@ -1,3 +1,4 @@
+const product = require('../models/product');
 const productService = require('../services/product.service');
 module.exports = {
     getProductById: async (req, res, next) => {
@@ -39,6 +40,14 @@ module.exports = {
         try {
             const DTO = await productService.updateProductById(req);
 
+            res.status(200).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    searchProduct: async (req, res, next) => {
+        try {
+            const DTO = await productService.searchProduct(req.body);
             res.status(200).json(DTO);
         } catch (error) {
             next(error);

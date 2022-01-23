@@ -17,5 +17,5 @@ router.put(
     upload.single('image'),
     productController.updateProductById
 );
-
+router.get('/search', productController.searchProduct);
 module.exports = router;

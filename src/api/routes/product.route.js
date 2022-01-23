@@ -2,7 +2,10 @@ const router = require('express').Router();
 const productController = require('../controllers/product.controller');
 const { verifyToken } = require('../middlewares/verifyToken');
 const { verifyAdmin } = require('../middlewares/verifyAdmin');
-const upload = require('../configs/multer.config');
+const multer = require('multer');
+const storage = require('../middlewares/CloudinaryStorage');
+const upload = multer({ storage: storage });
+
 //get all product
 router.get('/', productController.getAllProduct);
 //create product(Admin role)

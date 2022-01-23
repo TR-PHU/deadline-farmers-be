@@ -6,10 +6,11 @@ const api = require('./src/api/routes/index');
 const connectDatabase = require('./src/api/configs/db.config');
 const createError = require('http-errors');
 const cors = require('cors');
+connectDatabase();
 
 app.use(cors());
 app.use(express.json());
-connectDatabase();
+app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/v1', api);
 

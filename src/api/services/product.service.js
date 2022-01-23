@@ -125,17 +125,24 @@ module.exports = {
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
-            if (!file) throw new CreateError(400, 'Please upload image!');
-
+            
             let product = await Product.findById(params.id);
-
+            
             if (!product) {
                 throw new CreateError(404, 'Product not found');
             }
-            //delete image in cloudinary
-            await cloudinary.uploader.destroy(product.cloudinary_id);
-            const result = await cloudinary.uploader.upload(file.path);
 
+            var result;
+            if (file) {
+                await cloudinary.uploader.destroy(product.cloudinary_id);
+                result = await cloudinary.uploader.upload(file.path);
+            } else {
+                result = {
+                    secure_url: product.image,
+                    cloudinary_id: product.cloudinary_id
+                }
+            }
+            
             product = await Product.updateOne(
                 { _id: params.id },
                 {
@@ -151,6 +158,7 @@ module.exports = {
                     },
                 }
             );
+
 
             return {
                 statusCode: 204,

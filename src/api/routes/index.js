@@ -9,6 +9,7 @@ router.use('/auth', authRoute);
 router.use('/product', productRoute);
 
 router.use('/cart', cartRoute);
+
 router.use('/order', orderRoute);
 
 module.exports = router;

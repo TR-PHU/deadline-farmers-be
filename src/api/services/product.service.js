@@ -11,7 +11,7 @@ module.exports = {
     getProductById: async (productId) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(productId)) {
-                throw new createError(404, 'Invalid input!');
+                throw new createError(404, 'Product not found!');
             }
             const res = await Product.find({ _id: productId });
             console.log(res);
@@ -39,6 +39,7 @@ module.exports = {
                 cloudinary_id: result.public_id,
                 price,
                 category,
+                quantity,
                 description,
                 rating,
             });
@@ -52,6 +53,7 @@ module.exports = {
             if (error) throw error;
             throw new CreateError(500, 'Internal server errors');
         }
+        x;
     },
     getAllProduct: async (qPage, qSort) => {
         const PAGE_SIZE = 12;
@@ -97,7 +99,7 @@ module.exports = {
     deleteProductById: async (id) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) {
-                throw new createError(400, 'Invalid input!');
+                throw new createError(404, 'Product not found');
             }
             const product = await Product.findById(id);
 
@@ -119,8 +121,7 @@ module.exports = {
     },
     updateProductById: async ({ params, body, file }) => {
         try {
-            const { name, description, price, rating, category } = body;
-
+            const { name, description, price, quantity, rating, category } = body;
             if (!mongoose.Types.ObjectId.isValid(params.id)) {
                 throw new createError(404, 'Product not found');
             }
@@ -149,6 +150,7 @@ module.exports = {
                         image: result.secure_url,
                         cloudinary_id: result.public_id,
                         price,
+                        quantity,
                         rating,
                         category,
                     },
@@ -158,6 +160,18 @@ module.exports = {
             return {
                 statusCode: 204,
                 msg: 'Update Success!',
+            };
+        } catch (error) {
+            if (error) throw error;
+            throw new CreateError(500, 'Interval server errors');
+        }
+    },
+    searchProduct: async ({ name }) => {
+        try {
+            const res = await Product.find({ name: { $regex: name } });
+            return {
+                msg: 'successfully searched',
+                res,
             };
         } catch (error) {
             if (error) throw error;

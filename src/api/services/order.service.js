@@ -10,6 +10,11 @@ const searchProduct = async (productId) => {
 module.exports = {
     addOrder: async (userId, products) => {
         try {
+            const oldOrder = await Order.find({userId});
+            
+            if(oldOrder.length == 0) {
+                const resDB = await Order.create
+            }
             const order = await Order.updateOne(
                 { userId },
                 {
@@ -20,7 +25,7 @@ module.exports = {
             );
             return {
                 statusCode: 200,
-                message: 'Payment success',
+                message: 'Payment success'
             };
         } catch (error) {
             if (error) throw new createError(error);

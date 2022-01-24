@@ -51,19 +51,19 @@ module.exports = {
     getCartByUserId: async (id) => {
         try {
             let res = await Cart.find({ userId: id });
-
+            
             if (res.length == 0) {
                 return [];
             }
-
+            
             for (let i of res[0].products) {
-                const resDB = await searchProduct(i.productId);
+                const resDB = await Product.findById(i.productId)
                 if (resDB) {
                     i.name = resDB.name;
                     i.image = resDB.image;
                 }
             }
-
+            
             return res;
         } catch (error) {
             if (error) throw error;

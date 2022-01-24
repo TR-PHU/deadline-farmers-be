@@ -34,24 +34,18 @@ module.exports = {
             if (res.length == 0) {
                 return [];
             }
-            let count = 0;
-            let resDB = [];
-            for (let i of res[0].products) {
-                resDB[count] = await Product.findById(i.productId);
+            let result = res[0].products;
+            for (let i of result) {
+                const resDB = await Product.findById(i.productId)
+                console.log(resDB)
                 if (resDB) {
                     i.name = resDB.name;
                     i.image = resDB.image;
-                    result.push(i)
-                }
-                count++;
-                if (count === res[0].products.length) {
-                    return {
-                        statusCode: 200,
-                        message: 'Getting order successful',
-                        resDB,
-                    };
                 }
             }
+            console.log(result)
+            
+            return res;
         } catch (error) {
             throw new createError(error);
         }

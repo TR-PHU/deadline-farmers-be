@@ -125,9 +125,9 @@ module.exports = {
             if (!name || !description || !price) {
                 throw new CreateError(400, 'Invalid input');
             }
-            
+
             let product = await Product.findById(params.id);
-            
+
             if (!product) {
                 throw new CreateError(404, 'Product not found');
             }
@@ -139,10 +139,10 @@ module.exports = {
             } else {
                 result = {
                     secure_url: product.image,
-                    cloudinary_id: product.cloudinary_id
-                }
+                    cloudinary_id: product.cloudinary_id,
+                };
             }
-            
+
             product = await Product.updateOne(
                 { _id: params.id },
                 {
@@ -158,7 +158,6 @@ module.exports = {
                     },
                 }
             );
-
 
             return {
                 statusCode: 204,

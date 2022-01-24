@@ -7,6 +7,4 @@ router.post('/update-cart', verifyToken, cartController.updateCart);
 // get cart by user id
 router.get('/get-cart', verifyToken, cartController.getCartByUserId);
 
-
-
 module.exports = router;

@@ -51,7 +51,6 @@ module.exports = {
     getCartByUserId: async (id) => {
         try {
             let res = await Cart.find({ userId: id });
-
             if (res.length == 0) {
                 return [];
             }

@@ -43,7 +43,7 @@ module.exports = {
                     i.image = resDB.image;
                     result.push(i)
                 }
-                x++;
+                count++;
                 if (count === res[0].products.length) {
                     return {
                         statusCode: 200,

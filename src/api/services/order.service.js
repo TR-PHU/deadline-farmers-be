@@ -3,19 +3,10 @@ const { log } = require('util');
 const Order = require('../models/order');
 const Product = require('../models/product');
 
-const searchProduct = async (productId) => {
-    const product = await Product.findById(productId);
-    return product;
-};
 
 module.exports = {
     addOrder: async (userId, products) => {
         try {
-            const oldOrder = await Order.find({userId});
-            
-            if(oldOrder.length == 0) {
-                const resDB = await Order.create
-            }
             const order = await Order.updateOne(
                 { userId },
                 {
@@ -44,6 +35,26 @@ module.exports = {
             console.log(res);
             if (res.length == 0) {
                 return [];
+            }
+
+            let count = 0;
+            let resDB = [];
+
+            for (let i of res[0].products) {
+                let x = await Product.findById(i.productId);
+                if (x !== null) {
+                    resDB[count] = x;
+                    resDB[count].quantity = i.quantity;
+                    resDB[count].price = i.price;
+                    count++;
+                }
+                if (count === res[0].products.length) {
+                    return {
+                        statusCode: 200,
+                        message: 'Getting order successful',
+                        order: resDB,
+                    };
+                }
             }
 
             return res;

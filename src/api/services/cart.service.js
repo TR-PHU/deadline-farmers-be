@@ -2,6 +2,11 @@ const Cart = require('../models/cart');
 const createError = require('http-errors');
 const Product = require('../models/product');
 
+const searchProduct = async (productId) => {
+    const product = await Product.findById(productId);
+    return product;
+};
+
 module.exports = {
     updateCart: async (userId, products) => {
         try {
@@ -52,10 +57,12 @@ module.exports = {
             }
 
             for (let i of res[0].products) {
-                const resDB = await Product.findById(i.productId);
-                if (resDB == null) throw createError(404, 'Product in cart not found');
-                i.name = resDB.name;
-                i.image = resDB.image;
+                const resDB = await searchProduct(i.productId);
+                if (resDB) {
+                    i.name = resDB.name;
+                    i.image = resDB.image;
+                    return i;
+                }
             }
 
             return res;

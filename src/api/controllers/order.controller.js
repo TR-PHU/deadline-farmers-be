@@ -4,7 +4,7 @@ module.exports = {
     addOrder: async (req, res, next) => {
         const userId = req.user.userId;
         const { products } = req.body;
-        if (!products) {
+        if (products.length == 0) {
             res.status(400).json({ statusCode: 400, message: 'Product is required.' });
         }
         try {
@@ -18,7 +18,8 @@ module.exports = {
         const userId = req.user.userId;
         try {
             const DTO = await orderService.getOrder(userId);
-            res.status(DTO.statusCode).json(DTO);
+            
+            res.status(200).json(DTO);
         } catch (error) {
             next(error);
         }

@@ -174,7 +174,8 @@ module.exports = {
             if (!category && !name) {
                 throw new CreateError(404, 'Please type in category or name');
             } else if (!category) {
-                const res = await Product.find({ name: { $regex: name, $options: 'i' } });
+                const res = await Product.find({ name: { $regex: name,  $options: 'i' } });
+                
                 return {
                     msg: 'successfully searched',
                     res,

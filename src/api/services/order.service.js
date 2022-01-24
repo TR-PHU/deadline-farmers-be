@@ -32,16 +32,14 @@ module.exports = {
             let resDB = [];
             for (let i of res[0].products) {
                 resDB[count] = await Product.findById(i.productId);
-                if (resDB) {
-                    i.name = resDB.name;
-                    i.image = resDB.image;
-                }
+                resDB[count].quantity = i.quantity;
+                resDB[count].price = i.price;
                 count++;
                 if (count === res[0].products.length) {
                     return {
                         statusCode: 200,
                         message: 'Getting order successful',
-                        resDB,
+                        order: resDB,
                     };
                 }
             }

@@ -30,11 +30,15 @@ module.exports = {
             }
             let count = 0;
             let resDB = [];
+
             for (let i of res[0].products) {
-                resDB[count] = await Product.findById(i.productId);
-                resDB[count].quantity = i.quantity;
-                resDB[count].price = i.price;
-                count++;
+                let x = await Product.findById(i.productId);
+                if (x !== null) {
+                    resDB[count] = x;
+                    resDB[count].quantity = i.quantity;
+                    resDB[count].price = i.price;
+                    count++;
+                }
                 if (count === res[0].products.length) {
                     return {
                         statusCode: 200,
